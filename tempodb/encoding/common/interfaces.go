@@ -75,7 +75,7 @@ type CompactionOptions struct {
 	ObjectsCombined func(compactionLevel, objects int)
 	ObjectsWritten  func(compactionLevel, objects int)
 	BytesWritten    func(compactionLevel, bytes int)
-	SpansDiscarded  func(traceID string, traceName string, spans int)
+	SpansDiscarded  func(traceID string, rootSpanName string, rootServiceName string, spans int)
 }
 
 type Iterator interface {
