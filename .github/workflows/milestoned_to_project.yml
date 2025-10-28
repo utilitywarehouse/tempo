@@ -5,6 +5,9 @@ on:
   issues:
     types: [milestoned]
     
+permissions:
+  contents: read
+
 jobs:
   build:
     # only run in grafana/tempo.
@@ -12,7 +15,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/add-to-project@v0.4.0
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/add-to-project@960fbad431afda394cfcf8743445e741acd19e85 # v0.4.0
         with:
           project-url: https://github.com/orgs/grafana/projects/135
           github-token: ${{ secrets.GH_BOT_ACCESS_TOKEN }}

@@ -3,14 +3,26 @@ on:
   pull_request:
     paths: ["docs/sources/**"]
   workflow_dispatch:
+permissions:
+  contents: read
+
 jobs:
   doc-validator:
+    permissions:
+      checks: write  # for reviewdog to create check
+      contents: read  # for actions/checkout to fetch code
+      pull-requests: write  # for reviewdog to add comment to the PR
     runs-on: "ubuntu-latest"
     container:
       image: "grafana/doc-validator:v3.0.0"
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        with:
+          egress-policy: audit
+
       - name: "Checkout code"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744" # v3.6.0
       - name: "Run doc-validator"
         run: |
           rm -rf /hugo/content/docs
