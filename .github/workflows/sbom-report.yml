@@ -4,17 +4,28 @@ on:
   release:
     types: [created]
 
+permissions:
+  contents: read
+
 jobs:
   syft-sbom:
 
+    permissions:
+      actions: write  # for anchore/sbom-action to upload workflow artifacts
+      contents: write  # for anchore/sbom-action to upload & delete release assets
     runs-on: ubuntu-latest
 
     steps:
+    - name: Harden the runner (Audit all outbound calls)
+      uses: step-security/harden-runner@8d3c67de8e2fe68ef647c8db1e6a09f647780f40 # v2.19.0
+      with:
+        egress-policy: audit
+
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
         
     - name: Anchore SBOM Action
-      uses: anchore/sbom-action@v0.12.0
+      uses: anchore/sbom-action@b5042e9d19d8b32849779bfe17673ff84aec702d # v0.12.0
       with:
          artifact-name: ${{ github.event.repository.name }}-spdx.json
 
